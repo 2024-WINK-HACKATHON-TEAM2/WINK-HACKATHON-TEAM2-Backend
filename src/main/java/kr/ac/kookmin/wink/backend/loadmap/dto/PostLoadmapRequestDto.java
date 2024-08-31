@@ -8,10 +8,6 @@ import java.util.List;
 @Getter
 public class PostLoadmapRequestDto {
 
-    private String summary;
-
-    private Long view;
-
     private String title;
 
     private List<LoadmapCircleRequestDto> loadmapCircleList;

@@ -34,10 +34,9 @@ public class Loadmap {
 
     public Loadmap() {}
 
-    public Loadmap(User user, String summary, Long view, String title) {
+    public Loadmap(User user, String title) {
+        this.view = 0L;
         this.user = user;
-        this.summary = summary;
-        this.view = view;
         this.title = title;
     }
 

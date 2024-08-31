@@ -25,13 +25,8 @@ public class LoadmapCircle {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "start_date")
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime startDate;
-
-    @Column(name = "end_date")
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime endDate;
+    @Column(name = "date")
+    private String date;
 
     @Column(name = "content")
     private String content;
@@ -45,11 +40,10 @@ public class LoadmapCircle {
 
     public LoadmapCircle() {}
 
-    public LoadmapCircle(Loadmap loadmap, String title, LocalDateTime startDate, LocalDateTime endDate, String content, Integer level, ColorType colorType) {
+    public LoadmapCircle(Loadmap loadmap, String title, String date, String content, Integer level, ColorType colorType) {
         this.loadmap = loadmap;
         this.title = title;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.date = date;
         this.content = content;
         this.level = level;
         this.colorType = colorType;

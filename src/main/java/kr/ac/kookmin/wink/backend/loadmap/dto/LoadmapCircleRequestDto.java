@@ -10,9 +10,7 @@ public class LoadmapCircleRequestDto {
 
     private String title;
 
-    private LocalDateTime startTime;
-
-    private LocalDateTime endTime;
+    private String date;
 
     private String content;
 
