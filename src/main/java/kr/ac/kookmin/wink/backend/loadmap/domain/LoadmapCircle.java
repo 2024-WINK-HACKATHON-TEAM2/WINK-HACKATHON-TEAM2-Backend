@@ -3,10 +3,6 @@ package kr.ac.kookmin.wink.backend.loadmap.domain;
 import jakarta.persistence.*;
 import kr.ac.kookmin.wink.backend.loadmap.enums.ColorType;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
