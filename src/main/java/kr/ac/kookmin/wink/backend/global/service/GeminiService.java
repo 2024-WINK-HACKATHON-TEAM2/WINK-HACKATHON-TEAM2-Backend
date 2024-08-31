@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.kookmin.wink.backend.loadmap.domain.Loadmap;
 import kr.ac.kookmin.wink.backend.loadmap.domain.LoadmapCircle;
+import kr.ac.kookmin.wink.backend.loadmap.dto.LoadmapCircleRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -18,15 +20,15 @@ import java.util.concurrent.CompletableFuture;
 public class GeminiService {
 
     private final RestTemplate restTemplate;
-    @Value("google.gemini.key")
+    @Value("${google.gemini.key}")
     private String key;
 
     @Async
-    public CompletableFuture<String> getLoadmapSummaryAsync(Loadmap loadmap) {
+    public CompletableFuture<String> getLoadmapSummaryAsync(Loadmap loadmap, List<LoadmapCircleRequestDto> loadmapCircleList) {
         String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
         url += "?key=" + key;
-        String content = loadmapToContent(loadmap);
-        String prompt = ". 30자 이내로 한 줄로 요약해줘";
+        String content = loadmapToContent(loadmap, loadmapCircleList);
+        String prompt = " 한 문장으로 요약해줘";
         String request = "{\n" +
             "    \"contents\": [\n" +
             "        {\n" +
@@ -64,16 +66,19 @@ public class GeminiService {
         }
     }
 
-    private String loadmapToContent(Loadmap loadmap) {
+    private String loadmapToContent(Loadmap loadmap, List<LoadmapCircleRequestDto> loadmapCircleList) {
         String str = "";
-        str += ("제목 : " + loadmap.getTitle() + ", ");
-        for (int i = 1; i <= loadmap.getLoadmapCircles().size(); i++) {
-            LoadmapCircle lc = loadmap.getLoadmapCircles().get(i);
-            str += ("(순서 : " + i + ", ");
-            str += ("제목 : " + lc.getTitle() + ", ");
-            str += ("날짜 : " + lc.getDate() + ", ");
-            str += ("내용 : " + lc.getContent() + ", ");
-            str += ("중요도 : " + lc.getLevel() + ")");
+//        str += ("전체 제목 : " + loadmap.getTitle() + ", \n");
+//        for (int i = 1; i <= loadmapCircleList.size(); i++) {
+//            LoadmapCircleRequestDto lc = loadmapCircleList.get(i-1);
+//            str += ("(제목 : " + lc.getTitle() + ", \n");
+//            str += ("날짜 : " + lc.getDate() + ", \n");
+//            str += ("내용 : " + lc.getContent() + ", \n");
+//            str += ("중요도 : " + lc.getLevel() + ")\n\n");
+//        }
+        for (int i = 1; i <= loadmapCircleList.size(); i++) {
+            LoadmapCircleRequestDto lc = loadmapCircleList.get(i-1);
+            str += (lc.getContent() + " ");
         }
         return str;
     }

@@ -103,7 +103,7 @@ public class LoadmapService {
         }
 
         // 3. 비동기 작업 시작
-        geminiService.getLoadmapSummaryAsync(savedLoadmap).thenAccept(summary -> {
+        geminiService.getLoadmapSummaryAsync(savedLoadmap, postLoadmapRequestDto.getLoadmapCircleList()).thenAccept(summary -> {
             savedLoadmap.setSummary(summary);
             loadmapRepository.save(savedLoadmap);
         });
