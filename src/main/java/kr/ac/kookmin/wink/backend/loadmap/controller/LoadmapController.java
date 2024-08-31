@@ -24,7 +24,7 @@ public class LoadmapController {
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<GetLoadmapsBySearchResponseDto> getLoadmapsBySearch(@RequestParam String keyword) {
         return ResponseEntity.ok(loadmapService.getLoadmapBySearch(keyword));
     }
@@ -44,7 +44,7 @@ public class LoadmapController {
         return ResponseEntity.ok(loadmapService.getLoadmapById(id));
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Void> postLoadmap(
             @RequestBody PostLoadmapRequestDto postLoadmapRequestDto,
             HttpServletRequest request
