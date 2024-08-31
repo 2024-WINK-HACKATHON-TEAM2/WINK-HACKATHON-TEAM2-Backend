@@ -28,7 +28,7 @@ public class GeminiService {
         String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
         url += "?key=" + key;
         String content = loadmapToContent(loadmap, loadmapCircleList);
-        String prompt = " 한 문장으로 요약해줘";
+        String prompt = " 공백을 포함해서 60자 이내의 한 문장으로 요약해줘";
         String request = "{\n" +
             "    \"contents\": [\n" +
             "        {\n" +
