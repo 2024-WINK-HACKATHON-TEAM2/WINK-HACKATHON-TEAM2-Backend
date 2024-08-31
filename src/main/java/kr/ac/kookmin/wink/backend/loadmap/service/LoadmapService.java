@@ -57,7 +57,7 @@ public class LoadmapService {
     }
 
     @Transactional
-    public GetLoadmapsResponseDto getLoadmap() {
+    public GetLoadmapsResponseDto getLoadmap(String name) {
         List<LoadmapAndColorDto> result = new ArrayList<>();
         List<Loadmap> loadmapList = loadmapRepository.findAllByOrderByViewDesc();
         for (Loadmap loadmap : loadmapList) {
@@ -66,7 +66,7 @@ public class LoadmapService {
             LoadmapDto loadmapDto = new LoadmapDto(loadmap.getId(), user.getId(), user.getName(), loadmap.getView(), loadmap.getTitle(), loadmap.getSummary());
             result.add(new LoadmapAndColorDto(loadmapDto, color));
         }
-        return new GetLoadmapsResponseDto(result);
+        return new GetLoadmapsResponseDto(result, name);
     }
 
     @Transactional

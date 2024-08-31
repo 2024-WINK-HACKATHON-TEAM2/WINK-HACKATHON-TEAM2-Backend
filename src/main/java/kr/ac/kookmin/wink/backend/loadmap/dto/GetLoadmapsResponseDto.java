@@ -8,9 +8,11 @@ import java.util.List;
 public class GetLoadmapsResponseDto {
 
     List<LoadmapAndColorDto> list;
+    String name;
 
-    public GetLoadmapsResponseDto(List<LoadmapAndColorDto> list) {
+    public GetLoadmapsResponseDto(List<LoadmapAndColorDto> list, String name) {
         this.list = list;
+        this.name = name;
     }
 
 }

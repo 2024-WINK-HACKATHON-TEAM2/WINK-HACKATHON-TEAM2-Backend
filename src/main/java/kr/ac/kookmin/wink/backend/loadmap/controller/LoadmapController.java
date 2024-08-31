@@ -7,9 +7,13 @@ import kr.ac.kookmin.wink.backend.loadmap.dto.GetLoadmapsResponseDto;
 import kr.ac.kookmin.wink.backend.loadmap.dto.LoadmapResponseDto;
 import kr.ac.kookmin.wink.backend.loadmap.dto.PostLoadmapRequestDto;
 import kr.ac.kookmin.wink.backend.loadmap.service.LoadmapService;
+import kr.ac.kookmin.wink.backend.user.domain.User;
+import kr.ac.kookmin.wink.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,6 +22,7 @@ public class LoadmapController {
 
     private final LoadmapService loadmapService;
     private final JwtProvider jwtProvider;
+    private final UserRepository userRepository;
 
     @GetMapping("/")
     public ResponseEntity<GetLoadmapsBySearchResponseDto> getLoadmapsBySearch(@RequestParam String keyword) {
@@ -25,8 +30,13 @@ public class LoadmapController {
     }
 
     @GetMapping("/main")
-    public ResponseEntity<GetLoadmapsResponseDto> getLoadmaps() {
-        return ResponseEntity.ok(loadmapService.getLoadmap());
+    public ResponseEntity<GetLoadmapsResponseDto> getLoadmaps(
+            HttpServletRequest request
+    ) {
+        Long userId = jwtProvider.getUserId(request);
+        Optional<User> user = userRepository.findById(userId);
+        String name = user.get().getName();
+        return ResponseEntity.ok(loadmapService.getLoadmap(name));
     }
 
     @GetMapping("/{id}")
