@@ -38,9 +38,14 @@ public class Loadmap {
         this.view = 0L;
         this.user = user;
         this.title = title;
+        this.summary = "AI가 요약중입니다~";
     }
 
     public void setView(Long view) {
         this.view = view;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 }

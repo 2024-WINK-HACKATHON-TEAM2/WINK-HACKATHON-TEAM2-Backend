@@ -42,7 +42,6 @@ public class UserService {
 
     @Transactional
     public LoginResponseDTO login(String code) {
-        System.out.println("@@@hello world");
         ClientRegistration provider = inMemoryClientRegistrationRepository.findByRegistrationId(clientName);
         KakaoTokenResponseDTO tokenResponse = getToken(code, provider);
         CustomUserInfoDTO userInfo = getUserInfo(tokenResponse);

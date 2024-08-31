@@ -1,5 +1,6 @@
 package kr.ac.kookmin.wink.backend.loadmap.service;
 
+import kr.ac.kookmin.wink.backend.global.service.GeminiService;
 import kr.ac.kookmin.wink.backend.loadmap.domain.Loadmap;
 import kr.ac.kookmin.wink.backend.loadmap.domain.LoadmapCircle;
 import kr.ac.kookmin.wink.backend.loadmap.domain.LoadmapLike;
@@ -13,6 +14,7 @@ import kr.ac.kookmin.wink.backend.user.domain.User;
 import kr.ac.kookmin.wink.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -24,7 +26,9 @@ public class LoadmapService {
     private final LoadmapLikeRepository loadmapLikeRepository;
     private final LoadmapCircleRepository loadmapCircleRepository;
     private final UserRepository userRepository;
+    private final GeminiService geminiService;
 
+    @Transactional
     public GetLoadmapsBySearchResponseDto getLoadmapBySearch(String keyword) {
         List<Loadmap> loadmapList = loadmapRepository.findAll(LoadmapSpecifications.search(keyword.trim()));
         loadmapList.sort(Comparator.comparingLong(Loadmap::getView).reversed()); // 조회수 내림차순
@@ -37,6 +41,7 @@ public class LoadmapService {
         return new GetLoadmapsBySearchResponseDto(loadmapDtoList);
     }
 
+    @Transactional
     public ColorType getColor(Loadmap loadmap) {
         ColorType color;
         Map<ColorType, Integer> map = new HashMap<>();
@@ -51,6 +56,7 @@ public class LoadmapService {
         return color;
     }
 
+    @Transactional
     public GetLoadmapsResponseDto getLoadmap() {
         List<LoadmapAndColorDto> result = new ArrayList<>();
         List<Loadmap> loadmapList = loadmapRepository.findAllByOrderByViewDesc();
@@ -63,6 +69,7 @@ public class LoadmapService {
         return new GetLoadmapsResponseDto(result);
     }
 
+    @Transactional
     public LoadmapResponseDto getLoadmapById(long id) {
         Loadmap loadmap = loadmapRepository.findById(id);
         Long view = loadmap.getView();
@@ -85,6 +92,7 @@ public class LoadmapService {
         return new LoadmapResponseDto(loadmapAndColor, loadmapCircleDtoList);
     }
 
+    @Transactional
     public void postLoadmap(PostLoadmapRequestDto postLoadmapRequestDto, Long userId) {
         User user = userRepository.findById(userId).get();
         Loadmap loadmap = new Loadmap(user, postLoadmapRequestDto.getTitle());
@@ -93,8 +101,15 @@ public class LoadmapService {
             LoadmapCircle loadmapCircle = new LoadmapCircle(savedLoadmap, circle.getTitle(), circle.getDate(), circle.getContent(), circle.getLevel(), circle.getColorType());
             loadmapCircleRepository.save(loadmapCircle);
         }
+
+        // 3. 비동기 작업 시작
+        geminiService.getLoadmapSummaryAsync(savedLoadmap).thenAccept(summary -> {
+            savedLoadmap.setSummary(summary);
+            loadmapRepository.save(savedLoadmap);
+        });
     }
 
+    @Transactional
     public void postLoadmapLike(Long loadMapId, Long userId) {
         Optional<LoadmapLike> optionalLoadmapLike = loadmapLikeRepository.findByLoadmapIdAndUserId(loadMapId, userId);
         if (optionalLoadmapLike.isEmpty()) {
