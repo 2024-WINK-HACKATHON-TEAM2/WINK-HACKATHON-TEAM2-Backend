@@ -1,1 +1,42 @@
-spring.application.name=backend
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 24ff02d36e38476955184f311e36a298
+            redirect-uri: http://localhost:8080/{action}/oauth2/code/{registrationId}
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            client-name: kakao
+            scope: profile_nickname
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/lifecycle
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        # 테이블 생성 시 캐멀 케이스를 스네이크 케이스로 변경
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+jwt:
+  token:
+    secret-key: eyJhbGciOiJIUzI1NiJ9eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcyNTA5ODQ1NCwiaWF0IjoxNzI1MDk4NDU0fQE4ve93BYgyGIJCC56Bn11RyonEKAVuPwMPXorPmdg
+  access-token:
+    expire-time: 1800000
+
+cors:
+  frontend: http://localhost:3000
