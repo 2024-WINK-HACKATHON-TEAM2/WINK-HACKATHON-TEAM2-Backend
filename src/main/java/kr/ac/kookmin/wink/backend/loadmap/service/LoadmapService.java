@@ -26,7 +26,7 @@ public class LoadmapService {
     private final UserRepository userRepository;
 
     public GetLoadmapsBySearchResponseDto getLoadmapBySearch(String keyword) {
-        List<Loadmap> loadmapList = loadmapRepository.findAll(LoadmapSpecifications.search(keyword));
+        List<Loadmap> loadmapList = loadmapRepository.findAll(LoadmapSpecifications.search(keyword.trim()));
         loadmapList.sort(Comparator.comparingLong(Loadmap::getView).reversed()); // 조회수 내림차순
         List<LoadmapDto> loadmapDtoList = new ArrayList<>();
         for (Loadmap loadmap : loadmapList) {
@@ -64,6 +64,7 @@ public class LoadmapService {
     public LoadmapResponseDto getLoadmapById(long id) {
         Loadmap loadmap = loadmapRepository.findById(id);
         Long view = loadmap.getView();
+        if (view == null) view = 0L;
         loadmap.setView(view+1);
         loadmapRepository.save(loadmap);
         ColorType color = getColor(loadmap);
@@ -75,7 +76,7 @@ public class LoadmapService {
         for (LoadmapCircle circle : loadmapCircleList) {
             Loadmap loadmap1 = circle.getLoadmap();
             LoadmapDto loadmapDto1 = new LoadmapDto(loadmap1.getId(), loadmap1.getUser(), loadmap1.getView(), loadmap1.getTitle());
-            loadmapCircleDtoList.add(new LoadmapCircleDto(circle.getId(), loadmapDto1, circle.getTitle(), circle.getStartDate(), circle.getEndDate(), circle.getContent(), circle.getColorType()));
+            loadmapCircleDtoList.add(new LoadmapCircleDto(circle.getId(), loadmapDto1, circle.getTitle(), circle.getStartDate(), circle.getEndDate(), circle.getContent(), circle.getLevel(), circle.getColorType()));
         }
         return new LoadmapResponseDto(loadmapAndColor, loadmapCircleDtoList);
     }
@@ -85,7 +86,7 @@ public class LoadmapService {
         Loadmap loadmap = new Loadmap(user, postLoadmapRequestDto.getSummary(), postLoadmapRequestDto.getView(), postLoadmapRequestDto.getTitle());
         Loadmap savedLoadmap = loadmapRepository.save(loadmap);
         for (LoadmapCircleRequestDto circle : postLoadmapRequestDto.getLoadmapCircleList()) {
-            LoadmapCircle loadmapCircle = new LoadmapCircle(savedLoadmap, circle.getTitle(), circle.getStartTime(), circle.getEndTime(), circle.getContent(), circle.getColorType());
+            LoadmapCircle loadmapCircle = new LoadmapCircle(savedLoadmap, circle.getTitle(), circle.getStartTime(), circle.getEndTime(), circle.getContent(), circle.getLevel(), circle.getColorType());
             loadmapCircleRepository.save(loadmapCircle);
         }
     }

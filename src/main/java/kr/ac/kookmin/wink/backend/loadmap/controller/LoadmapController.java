@@ -20,7 +20,7 @@ public class LoadmapController {
     private final JwtProvider jwtProvider;
 
     @GetMapping("/")
-    public ResponseEntity<GetLoadmapsBySearchResponseDto> getLoadmapsBySearch(@RequestBody String keyword) {
+    public ResponseEntity<GetLoadmapsBySearchResponseDto> getLoadmapsBySearch(@RequestParam String keyword) {
         return ResponseEntity.ok(loadmapService.getLoadmapBySearch(keyword));
     }
 

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import kr.ac.kookmin.wink.backend.user.domain.User;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @Entity
 @Table(name = "loadmap")
@@ -26,6 +28,9 @@ public class Loadmap {
 
     @Column(name = "title")
     private String title;
+
+    @OneToMany(mappedBy = "loadmap", cascade = CascadeType.ALL)
+    private List<LoadmapCircle> loadmapCircles;
 
     public Loadmap() {}
 

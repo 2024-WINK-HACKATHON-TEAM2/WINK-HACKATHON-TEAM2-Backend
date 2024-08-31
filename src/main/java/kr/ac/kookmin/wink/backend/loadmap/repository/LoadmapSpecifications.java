@@ -14,14 +14,14 @@ public class LoadmapSpecifications {
         return (Root<Loadmap> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
             query.distinct(true);
 
-            Join<Loadmap, LoadmapCircle> loadmapCircleJoin = root.join("loadmapCircle", JoinType.LEFT);
+            Join<Loadmap, LoadmapCircle> loadmapCircleJoin = root.join("loadmapCircles", JoinType.LEFT);
 
             List<Predicate> predicates = new ArrayList<>();
             if (keyword != null && !keyword.isEmpty()) {
-                predicates.add(criteriaBuilder.like(root.get("summary"), "%" + keyword + "%"));
-                predicates.add(criteriaBuilder.like(root.get("title"), "%" + keyword + "%"));
-                predicates.add(criteriaBuilder.like(loadmapCircleJoin.get("title"), "%" + keyword + "%"));
-                predicates.add(criteriaBuilder.like(loadmapCircleJoin.get("content"), "%" + keyword + "%"));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("summary")), "%" + keyword + "%"));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + keyword + "%"));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(loadmapCircleJoin.get("title")), "%" + keyword + "%"));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(loadmapCircleJoin.get("content")), "%" + keyword + "%"));
             }
 
             return criteriaBuilder.or(predicates.toArray(new Predicate[0]));

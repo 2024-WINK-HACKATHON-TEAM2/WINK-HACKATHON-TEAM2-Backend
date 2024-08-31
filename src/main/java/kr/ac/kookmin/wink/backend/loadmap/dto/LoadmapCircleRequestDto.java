@@ -16,5 +16,7 @@ public class LoadmapCircleRequestDto {
 
     private String content;
 
+    private Integer level;
+
     private ColorType colorType;
 }

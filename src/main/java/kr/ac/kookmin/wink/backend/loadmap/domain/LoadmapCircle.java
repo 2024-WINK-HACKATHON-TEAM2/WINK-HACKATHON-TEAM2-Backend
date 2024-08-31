@@ -36,18 +36,22 @@ public class LoadmapCircle {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "level")
+    private Integer level;
+
     @Column(name = "color")
     @Enumerated(EnumType.STRING)
     private ColorType colorType;
 
     public LoadmapCircle() {}
 
-    public LoadmapCircle(Loadmap loadmap, String title, LocalDateTime startDate, LocalDateTime endDate, String content, ColorType colorType) {
+    public LoadmapCircle(Loadmap loadmap, String title, LocalDateTime startDate, LocalDateTime endDate, String content, Integer level, ColorType colorType) {
         this.loadmap = loadmap;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.content = content;
+        this.level = level;
         this.colorType = colorType;
     }
 }

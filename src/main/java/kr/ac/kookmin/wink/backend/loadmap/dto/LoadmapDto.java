@@ -1,7 +1,9 @@
 package kr.ac.kookmin.wink.backend.loadmap.dto;
 
 import kr.ac.kookmin.wink.backend.user.domain.User;
+import lombok.Getter;
 
+@Getter
 public class LoadmapDto {
     private Long id;
     private User user;
