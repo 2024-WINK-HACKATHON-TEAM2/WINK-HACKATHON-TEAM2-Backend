@@ -28,7 +28,12 @@ public class LoadmapService {
     public GetLoadmapsBySearchResponseDto getLoadmapBySearch(String keyword) {
         List<Loadmap> loadmapList = loadmapRepository.findAll(LoadmapSpecifications.search(keyword));
         loadmapList.sort(Comparator.comparingLong(Loadmap::getView).reversed()); // 조회수 내림차순
-        return new GetLoadmapsBySearchResponseDto(loadmapList);
+        List<LoadmapDto> loadmapDtoList = new ArrayList<>();
+        for (Loadmap loadmap : loadmapList) {
+            LoadmapDto loadmapDto = new LoadmapDto(loadmap.getId(), loadmap.getUser(), loadmap.getView(), loadmap.getTitle());
+            loadmapDtoList.add(loadmapDto);
+        }
+        return new GetLoadmapsBySearchResponseDto(loadmapDtoList);
     }
 
     public ColorType getColor(Loadmap loadmap) {
@@ -50,7 +55,8 @@ public class LoadmapService {
         List<Loadmap> loadmapList = loadmapRepository.findAllByOrderByViewDesc();
         for (Loadmap loadmap : loadmapList) {
             ColorType color = getColor(loadmap);
-            result.add(new LoadmapAndColorDto(loadmap, color));
+            LoadmapDto loadmapDto = new LoadmapDto(loadmap.getId(), loadmap.getUser(), loadmap.getView(), loadmap.getTitle());
+            result.add(new LoadmapAndColorDto(loadmapDto, color));
         }
         return new GetLoadmapsResponseDto(result);
     }
@@ -61,12 +67,20 @@ public class LoadmapService {
         loadmap.setView(view+1);
         loadmapRepository.save(loadmap);
         ColorType color = getColor(loadmap);
-        LoadmapAndColorDto loadmapAndColor = new LoadmapAndColorDto(loadmap, color);
+        LoadmapDto loadmapDto = new LoadmapDto(loadmap.getId(), loadmap.getUser(), loadmap.getView(), loadmap.getTitle());
+        LoadmapAndColorDto loadmapAndColor = new LoadmapAndColorDto(loadmapDto, color);
 
-        return new LoadmapResponseDto(loadmapAndColor, loadmapCircleRepository.findAllByLoadmapId(loadmap.getId()));
+        List<LoadmapCircle> loadmapCircleList = loadmapCircleRepository.findAllByLoadmapId(loadmap.getId());
+        List<LoadmapCircleDto> loadmapCircleDtoList = new ArrayList<>();
+        for (LoadmapCircle circle : loadmapCircleList) {
+            Loadmap loadmap1 = circle.getLoadmap();
+            LoadmapDto loadmapDto1 = new LoadmapDto(loadmap1.getId(), loadmap1.getUser(), loadmap1.getView(), loadmap1.getTitle());
+            loadmapCircleDtoList.add(new LoadmapCircleDto(circle.getId(), loadmapDto1, circle.getTitle(), circle.getStartDate(), circle.getEndDate(), circle.getContent(), circle.getColorType()));
+        }
+        return new LoadmapResponseDto(loadmapAndColor, loadmapCircleDtoList);
     }
 
-    public Loadmap postLoadmap(PostLoadmapRequestDto postLoadmapRequestDto, Long userId) {
+    public void postLoadmap(PostLoadmapRequestDto postLoadmapRequestDto, Long userId) {
         User user = userRepository.findById(userId).get();
         Loadmap loadmap = new Loadmap(user, postLoadmapRequestDto.getSummary(), postLoadmapRequestDto.getView(), postLoadmapRequestDto.getTitle());
         Loadmap savedLoadmap = loadmapRepository.save(loadmap);
@@ -74,8 +88,6 @@ public class LoadmapService {
             LoadmapCircle loadmapCircle = new LoadmapCircle(savedLoadmap, circle.getTitle(), circle.getStartTime(), circle.getEndTime(), circle.getContent(), circle.getColorType());
             loadmapCircleRepository.save(loadmapCircle);
         }
-
-        return savedLoadmap;
     }
 
     public void postLoadmapLike(Long loadMapId, Long userId) {
@@ -83,7 +95,7 @@ public class LoadmapService {
         if (optionalLoadmapLike.isEmpty()) {
             User user = userRepository.findById(userId).get();
             Loadmap loadmap = loadmapRepository.findById(loadMapId).get();
-            LoadmapLike loadmapLike = new LoadmapLike(user, loadmap);
+            loadmapLikeRepository.save(new LoadmapLike(user, loadmap));
         } else {
             loadmapLikeRepository.deleteAllById(Collections.singleton(optionalLoadmapLike.get().getId()));
         }

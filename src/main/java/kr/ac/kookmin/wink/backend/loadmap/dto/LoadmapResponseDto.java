@@ -6,10 +6,10 @@ import java.util.List;
 
 public class LoadmapResponseDto {
     private LoadmapAndColorDto loadmapAndColor;
-    private List<LoadmapCircle> loadmapCircleList;
+    private List<LoadmapCircleDto> loadmapCircleList;
 
-    public LoadmapResponseDto(LoadmapAndColorDto loadmapAndColor, List<LoadmapCircle> loadmapCircleList) {
+    public LoadmapResponseDto(LoadmapAndColorDto loadmapAndColor, List<LoadmapCircleDto> loadmapCircleDtos) {
         this.loadmapAndColor = loadmapAndColor;
-        this.loadmapCircleList = loadmapCircleList;
+        this.loadmapCircleList = loadmapCircleDtos;
     }
 }

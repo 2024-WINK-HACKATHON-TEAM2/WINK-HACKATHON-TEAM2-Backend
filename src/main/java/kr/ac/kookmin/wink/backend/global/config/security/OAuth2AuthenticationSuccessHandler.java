@@ -33,14 +33,18 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         CustomUserInfoDTO userInfo = new CustomUserInfoDTO(oAuth2User.getUserId());
         String kakaoUserId = oAuth2User.getAttributes().get("id").toString();
         Optional<User> optionalUser = userRepository.findBySocialId(kakaoUserId);
+        Long userId = null;
         if (optionalUser.isEmpty()) {
             User user = User.builder()
                 .socialId(kakaoUserId)
                 .name(oAuth2User.getName())
                 .build();
             userRepository.save(user);
+            userId = user.getId();
+        } else {
+            userId = optionalUser.get().getId();
         }
-        String accessToken = jwtProvider.createAccessToken(userInfo);
+        String accessToken = jwtProvider.createAccessToken(new CustomUserInfoDTO(userId));
         getRedirectStrategy().sendRedirect(request, response, getRedirectUrl(corsFrontend, accessToken));
     }
 

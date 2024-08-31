@@ -22,7 +22,7 @@ public class Loadmap {
     private String summary;
 
     @Column(name = "view")
-    private Long view;
+    private Long view = 0L;
 
     @Column(name = "title")
     private String title;

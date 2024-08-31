@@ -64,7 +64,7 @@ public class JwtProvider {
 
     //Token에서 User ID 추출
     public Long getUserId(String token) {
-        return parseClaims(token).get("memberId", Long.class);
+        return parseClaims(token).get("userId", Long.class);
     }
 
     public Long getUserId(HttpServletRequest request) {

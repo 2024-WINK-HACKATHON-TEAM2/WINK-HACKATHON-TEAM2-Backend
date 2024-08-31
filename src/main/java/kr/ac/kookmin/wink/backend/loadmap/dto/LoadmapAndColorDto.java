@@ -4,11 +4,11 @@ import kr.ac.kookmin.wink.backend.loadmap.domain.Loadmap;
 import kr.ac.kookmin.wink.backend.loadmap.enums.ColorType;
 
 public class LoadmapAndColorDto {
-    private Loadmap loadmap;
+    private LoadmapDto loadmapDto;
     private ColorType color;
 
-    public LoadmapAndColorDto(Loadmap loadmap, ColorType color) {
-        this.loadmap = loadmap;
+    public LoadmapAndColorDto(LoadmapDto loadmapDto, ColorType color) {
+        this.loadmapDto = loadmapDto;
         this.color = color;
     }
 }

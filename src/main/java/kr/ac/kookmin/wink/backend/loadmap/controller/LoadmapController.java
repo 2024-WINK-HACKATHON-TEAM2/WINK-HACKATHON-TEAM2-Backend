@@ -44,10 +44,11 @@ public class LoadmapController {
     }
 
     @PostMapping("/{id}/like")
-    public void postLoadmapLike(
+    public ResponseEntity<Void> postLoadmapLike(
             @PathVariable Long id,
             HttpServletRequest request
     ) {
         loadmapService.postLoadmapLike(id, jwtProvider.getUserId(request));
+        return ResponseEntity.ok().build();
     }
 }
