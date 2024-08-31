@@ -2,10 +2,15 @@ package kr.ac.kookmin.wink.backend.loadmap.repository;
 
 import kr.ac.kookmin.wink.backend.loadmap.domain.LoadmapLike;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
+@Repository
 public interface LoadmapLikeRepository extends JpaRepository<LoadmapLike, Long> {
 
-    public List<LoadmapLike> findAllByUserId();
+    public List<LoadmapLike> findAllByUserId(Long userId);
+
+    public Optional<LoadmapLike> findByLoadmapIdAndUserId(Long loadmapId, Long userId);
 }

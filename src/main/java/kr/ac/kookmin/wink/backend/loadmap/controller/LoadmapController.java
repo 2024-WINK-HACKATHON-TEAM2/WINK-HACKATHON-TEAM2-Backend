@@ -1,50 +1,53 @@
 package kr.ac.kookmin.wink.backend.loadmap.controller;
 
-import kr.ac.kookmin.wink.backend.loadmap.domain.Loadmap;
-import kr.ac.kookmin.wink.backend.loadmap.dto.LoadmapAndColor;
+import jakarta.servlet.http.HttpServletRequest;
+import kr.ac.kookmin.wink.backend.global.config.security.JwtProvider;
+import kr.ac.kookmin.wink.backend.loadmap.dto.GetLoadmapsBySearchResponseDto;
+import kr.ac.kookmin.wink.backend.loadmap.dto.GetLoadmapsResponseDto;
 import kr.ac.kookmin.wink.backend.loadmap.dto.LoadmapResponseDto;
 import kr.ac.kookmin.wink.backend.loadmap.dto.PostLoadmapRequestDto;
 import kr.ac.kookmin.wink.backend.loadmap.service.LoadmapService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/loadmap")
 public class LoadmapController {
 
-    private  LoadmapService loadmapService;
-
-    @Autowired
-    public LoadmapController(LoadmapService theLoadmapService) {
-        loadmapService = theLoadmapService;
-    }
+    private final LoadmapService loadmapService;
+    private final JwtProvider jwtProvider;
 
     @GetMapping("/")
-    public List<Loadmap> getLoadmapsBySearch(@RequestBody String keyword) {
-        return loadmapService.getLoadmapBySearch(keyword);
+    public ResponseEntity<GetLoadmapsBySearchResponseDto> getLoadmapsBySearch(@RequestBody String keyword) {
+        return ResponseEntity.ok(loadmapService.getLoadmapBySearch(keyword));
     }
 
     @GetMapping("/main")
-    public List<LoadmapAndColor> getLoadmaps() {
-        return loadmapService.getLoadmap();
+    public ResponseEntity<GetLoadmapsResponseDto> getLoadmaps() {
+        return ResponseEntity.ok(loadmapService.getLoadmap());
     }
 
     @GetMapping("/{id}")
-    public LoadmapResponseDto getLoadmapById(@PathVariable Long id) {
-        return loadmapService.getLoadmapById(id);
+    public ResponseEntity<LoadmapResponseDto> getLoadmapById(@PathVariable Long id) {
+        return ResponseEntity.ok(loadmapService.getLoadmapById(id));
     }
 
     @PostMapping("/")
-    public Loadmap postLoadmap(
-            @RequestBody PostLoadmapRequestDto postLoadmapRequestDto
+    public ResponseEntity<Void> postLoadmap(
+            @RequestBody PostLoadmapRequestDto postLoadmapRequestDto,
+            HttpServletRequest request
             ) {
-        return loadmapService.postLoadmap(postLoadmapRequestDto);
+        loadmapService.postLoadmap(postLoadmapRequestDto, jwtProvider.getUserId(request));
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/like")
-    public boolean postLoadmapLike(@PathVariable Long id) {
-        return loadmapService.postLoadmapLike(id);
+    public void postLoadmapLike(
+            @PathVariable Long id,
+            HttpServletRequest request
+    ) {
+        loadmapService.postLoadmapLike(id, jwtProvider.getUserId(request));
     }
 }

@@ -1,6 +1,7 @@
 package kr.ac.kookmin.wink.backend.loadmap.domain;
 
 import jakarta.persistence.*;
+import kr.ac.kookmin.wink.backend.user.domain.User;
 import lombok.Getter;
 
 @Getter

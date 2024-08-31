@@ -18,9 +18,9 @@ spring:
             user-name-attribute: id
 
   datasource:
-    url: jdbc:mysql://localhost:3306/lifecycle
-    username: root
-    password: 1234
+    url: jdbc:mysql://13.209.226.72:3306/lifecycle
+    username: test
+    password: 03100729
   jpa:
     hibernate:
       ddl-auto: update
