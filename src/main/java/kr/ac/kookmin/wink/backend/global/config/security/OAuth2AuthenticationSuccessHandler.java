@@ -34,6 +34,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String kakaoUserId = oAuth2User.getAttributes().get("id").toString();
         Optional<User> optionalUser = userRepository.findBySocialId(kakaoUserId);
         Long userId = null;
+        String userName = null;
         if (optionalUser.isEmpty()) {
             User user = User.builder()
                 .socialId(kakaoUserId)
@@ -41,16 +42,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .build();
             userRepository.save(user);
             userId = user.getId();
+            userName = user.getName();
         } else {
             userId = optionalUser.get().getId();
+            userName = optionalUser.get().getName();
         }
         String accessToken = jwtProvider.createAccessToken(new CustomUserInfoDTO(userId));
-        getRedirectStrategy().sendRedirect(request, response, getRedirectUrl(corsFrontend, accessToken));
+        getRedirectStrategy().sendRedirect(request, response, getRedirectUrl(corsFrontend, accessToken, userName));
     }
 
-    private String getRedirectUrl(String targetUrl, String token) {
+    private String getRedirectUrl(String targetUrl, String token, String userName) {
         return UriComponentsBuilder.fromUriString(targetUrl)
             .queryParam("token", token)
+            .queryParam("name", userName)
             .build().toUriString();
     }
 
