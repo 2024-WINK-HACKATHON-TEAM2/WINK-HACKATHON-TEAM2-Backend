@@ -32,11 +32,12 @@ public class LoadmapService {
     public GetLoadmapsBySearchResponseDto getLoadmapBySearch(String keyword) {
         List<Loadmap> loadmapList = loadmapRepository.findAll(LoadmapSpecifications.search(keyword.trim()));
         loadmapList.sort(Comparator.comparingLong(Loadmap::getView).reversed()); // 조회수 내림차순
-        List<LoadmapDto> loadmapDtoList = new ArrayList<>();
+        List<LoadmapAndColorDto> loadmapDtoList = new ArrayList<>();
         for (Loadmap loadmap : loadmapList) {
             User user = loadmap.getUser();
+            ColorType color = getColor(loadmap);
             LoadmapDto loadmapDto = new LoadmapDto(loadmap.getId(), user.getId(), user.getName(), loadmap.getView(), loadmap.getTitle(), loadmap.getSummary());
-            loadmapDtoList.add(loadmapDto);
+            loadmapDtoList.add(new LoadmapAndColorDto(loadmapDto, color));
         }
         return new GetLoadmapsBySearchResponseDto(loadmapDtoList);
     }

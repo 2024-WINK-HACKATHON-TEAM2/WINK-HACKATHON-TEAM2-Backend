@@ -7,9 +7,9 @@ import java.util.List;
 @Getter
 public class GetLoadmapsBySearchResponseDto {
 
-    List<LoadmapDto> list;
+    List<LoadmapAndColorDto> list;
 
-    public GetLoadmapsBySearchResponseDto(List<LoadmapDto> list) {
+    public GetLoadmapsBySearchResponseDto(List<LoadmapAndColorDto> list) {
         this.list = list;
     }
 }
