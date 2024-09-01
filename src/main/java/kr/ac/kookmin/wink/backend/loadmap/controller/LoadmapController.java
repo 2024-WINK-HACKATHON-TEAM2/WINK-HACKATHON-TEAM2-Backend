@@ -1,5 +1,6 @@
 package kr.ac.kookmin.wink.backend.loadmap.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import kr.ac.kookmin.wink.backend.global.config.security.JwtProvider;
 import kr.ac.kookmin.wink.backend.loadmap.dto.GetLoadmapsBySearchResponseDto;
@@ -24,11 +25,13 @@ public class LoadmapController {
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
 
+    @Operation(summary = "로드맵 검색")
     @GetMapping
     public ResponseEntity<GetLoadmapsBySearchResponseDto> getLoadmapsBySearch(@RequestParam String keyword) {
         return ResponseEntity.ok(loadmapService.getLoadmapBySearch(keyword));
     }
 
+    @Operation(summary = "로드맵 메인 페이지 조회")
     @GetMapping("/main")
     public ResponseEntity<GetLoadmapsResponseDto> getLoadmaps(
             HttpServletRequest request
@@ -39,11 +42,13 @@ public class LoadmapController {
         return ResponseEntity.ok(loadmapService.getLoadmap(name));
     }
 
+    @Operation(summary = "로드맵 상세 조회")
     @GetMapping("/{id}")
     public ResponseEntity<LoadmapResponseDto> getLoadmapById(@PathVariable Long id) {
         return ResponseEntity.ok(loadmapService.getLoadmapById(id));
     }
 
+    @Operation(summary = "로드맵 등록")
     @PostMapping
     public ResponseEntity<Void> postLoadmap(
             @RequestBody PostLoadmapRequestDto postLoadmapRequestDto,
@@ -53,6 +58,7 @@ public class LoadmapController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "로드맵 좋아요 & 좋아요 취소")
     @PostMapping("/{id}/like")
     public ResponseEntity<Void> postLoadmapLike(
             @PathVariable Long id,
