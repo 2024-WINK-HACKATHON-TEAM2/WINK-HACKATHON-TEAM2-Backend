@@ -44,15 +44,30 @@ public class LoadmapService {
 
     @Transactional
     public ColorType getColor(Loadmap loadmap) {
-        ColorType color;
+        ColorType color = null;
         Map<ColorType, Integer> map = new HashMap<>();
+        Map<ColorType, Integer> colorMaxLevelMap = new HashMap<>();
         List<LoadmapCircle> loadmapCircleList = loadmapCircleRepository.findAllByLoadmapId(loadmap.getId());
         for (LoadmapCircle loadmapCircle : loadmapCircleList) {
-            map.put(loadmapCircle.getColorType(), map.getOrDefault(loadmapCircle.getColorType(), 0)+1);
+            ColorType colorType = loadmapCircle.getColorType();
+            int level = loadmapCircle.getLevel();
+            map.put(colorType, map.getOrDefault(colorType, 0)+1);
+            colorMaxLevelMap.put(colorType, Math.max(colorMaxLevelMap.getOrDefault(colorType, 0), level));
         }
-        List<ColorType> keySet = new ArrayList<>(map.keySet());
-        keySet.sort((o1, o2) -> map.get(o2).compareTo(map.get(o1)));
-        color = keySet.get(0);
+        List<Map.Entry<ColorType, Integer>> entryList = new ArrayList<>(map.entrySet());
+        entryList.sort((e1, e2) -> {
+            int countComparison = e2.getValue().compareTo(e1.getValue());
+            if (countComparison == 0) {
+                // 카운트가 동일할 경우 최대 레벨을 비교
+                return colorMaxLevelMap.get(e2.getKey()).compareTo(colorMaxLevelMap.get(e1.getKey()));
+            }
+            return countComparison;
+        });
+
+        // 가장 많은 색상 또는 레벨이 높은 색상 얻기 (리스트 첫 번째 요소)
+        if (!entryList.isEmpty()) {
+            color = entryList.get(0).getKey();
+        }
         return color;
     }
 
