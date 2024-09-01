@@ -48,11 +48,10 @@ public class LoadmapService {
         Map<ColorType, Integer> map = new HashMap<>();
         List<LoadmapCircle> loadmapCircleList = loadmapCircleRepository.findAllByLoadmapId(loadmap.getId());
         for (LoadmapCircle loadmapCircle : loadmapCircleList) {
-            map.put(loadmapCircle.getColorType(), map.getOrDefault(loadmapCircle.getColorType(), 0));
+            map.put(loadmapCircle.getColorType(), map.getOrDefault(loadmapCircle.getColorType(), 0)+1);
         }
         List<ColorType> keySet = new ArrayList<>(map.keySet());
-        Collections.sort(keySet);
-        Collections.reverse(keySet);
+        keySet.sort((o1, o2) -> map.get(o2).compareTo(map.get(o1)));
         color = keySet.get(0);
         return color;
     }
