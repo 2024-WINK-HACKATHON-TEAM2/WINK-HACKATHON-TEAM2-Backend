@@ -13,4 +13,6 @@ public interface LoadmapLikeRepository extends JpaRepository<LoadmapLike, Long> 
     public List<LoadmapLike> findAllByUserId(Long userId);
 
     public Optional<LoadmapLike> findByLoadmapIdAndUserId(Long loadmapId, Long userId);
+
+    public List<LoadmapLike> findAllByLoadmapId(Long loadmapId);
 }

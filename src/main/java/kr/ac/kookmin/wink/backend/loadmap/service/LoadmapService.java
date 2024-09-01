@@ -36,7 +36,16 @@ public class LoadmapService {
         for (Loadmap loadmap : loadmapList) {
             User user = loadmap.getUser();
             ColorType color = getColor(loadmap);
-            LoadmapDto loadmapDto = new LoadmapDto(loadmap.getId(), user.getId(), user.getName(), loadmap.getView(), loadmap.getTitle(), loadmap.getSummary());
+            LoadmapDto loadmapDto = new LoadmapDto(
+                loadmap.getId(),
+                user.getId(),
+                user.getName(),
+                loadmap.getView(),
+                loadmap.getTitle(),
+                loadmap.getSummary(),
+                getLikes(loadmap.getId()),
+                isILike(loadmap.getId(), user.getId())
+            );
             loadmapDtoList.add(new LoadmapAndColorDto(loadmapDto, color));
         }
         return new GetLoadmapsBySearchResponseDto(loadmapDtoList);
@@ -78,7 +87,17 @@ public class LoadmapService {
         for (Loadmap loadmap : loadmapList) {
             ColorType color = getColor(loadmap);
             User user = loadmap.getUser();
-            LoadmapDto loadmapDto = new LoadmapDto(loadmap.getId(), user.getId(), user.getName(), loadmap.getView(), loadmap.getTitle(), loadmap.getSummary());
+
+            LoadmapDto loadmapDto = new LoadmapDto(
+                loadmap.getId(),
+                user.getId(),
+                user.getName(),
+                loadmap.getView(),
+                loadmap.getTitle(),
+                loadmap.getSummary(),
+                getLikes(loadmap.getId()),
+                isILike(loadmap.getId(), user.getId())
+            );
             result.add(new LoadmapAndColorDto(loadmapDto, color));
         }
         return new GetLoadmapsResponseDto(result, name);
@@ -93,7 +112,16 @@ public class LoadmapService {
         loadmapRepository.save(loadmap);
         ColorType color = getColor(loadmap);
         User user = loadmap.getUser();
-        LoadmapDto loadmapDto = new LoadmapDto(loadmap.getId(), user.getId(), user.getName(), loadmap.getView(), loadmap.getTitle(), loadmap.getSummary());
+        LoadmapDto loadmapDto = new LoadmapDto(
+            loadmap.getId(),
+            user.getId(),
+            user.getName(),
+            loadmap.getView(),
+            loadmap.getTitle(),
+            loadmap.getSummary(),
+            getLikes(loadmap.getId()),
+            isILike(loadmap.getId(), user.getId())
+        );
         LoadmapAndColorDto loadmapAndColor = new LoadmapAndColorDto(loadmapDto, color);
 
         List<LoadmapCircle> loadmapCircleList = loadmapCircleRepository.findAllByLoadmapId(loadmap.getId());
@@ -101,7 +129,16 @@ public class LoadmapService {
         for (LoadmapCircle circle : loadmapCircleList) {
             Loadmap loadmap1 = circle.getLoadmap();
             User user1 = loadmap1.getUser();
-            LoadmapDto loadmapDto1 = new LoadmapDto(loadmap1.getId(), user1.getId(), user1.getName(), loadmap1.getView(), loadmap1.getTitle(), loadmap1.getSummary());
+            LoadmapDto loadmapDto1 = new LoadmapDto(
+                loadmap1.getId(),
+                user1.getId(),
+                user1.getName(),
+                loadmap1.getView(),
+                loadmap1.getTitle(),
+                loadmap1.getSummary(),
+                getLikes(loadmap1.getId()),
+                isILike(loadmap.getId(), user1.getId())
+            );
             loadmapCircleDtoList.add(new LoadmapCircleDto(circle.getId(), loadmapDto1, circle.getTitle(), circle.getDate(), circle.getContent(), circle.getLevel(), circle.getColorType()));
         }
         return new LoadmapResponseDto(loadmapAndColor, loadmapCircleDtoList);
@@ -134,5 +171,13 @@ public class LoadmapService {
         } else {
             loadmapLikeRepository.deleteAllById(Collections.singleton(optionalLoadmapLike.get().getId()));
         }
+    }
+
+    private int getLikes(Long loadMapId) {
+        return loadmapLikeRepository.findAllByLoadmapId(loadMapId).size();
+    }
+
+    private boolean isILike(Long loadMapId, Long userId) {
+        return loadmapLikeRepository.findByLoadmapIdAndUserId(loadMapId, userId).isPresent();
     }
 }
